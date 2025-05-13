@@ -38,37 +38,44 @@ CMD ["node", "index.js"]
 
 
 ## pipeline shell script
+@Library("shared") _ 
 
 pipeline {
     agent any
 
     stages {
-        stage('code') {
+        stage('Print') {
             steps {
-                echo "git cloning"
-                git url: 'https://github.com/DeveloperMokchhedul/auto_deployment_with_aws.git', branch: 'main'
-                echo "git cloning complete"
+                script {
+                    jenkin() 
+                }
+            }
+        }
+
+        stage('Code Clone') {
+            steps {
+                script {
+                    gitclone("https://github.com/DeveloperMokchhedul/auto_deployment_with_aws.git", "main") 
+                }
             }
         }
 
         stage('build') {
             steps {
-                echo "docker build"
-                sh "docker build -t node-app:latest ."
-                echo "docker build complete"
+                script {
+                    build("node-app", "latest")
+                }
             }
         }
-
+        
         stage('deploy') {
             steps {
-               echo "deploy start"
-                sh '''
-                docker rm -f node-app || true
-                docker run -d --name node-app -p 3000:3000 node-app:latest
-                '''
-                echo "deploy complete"
+                script {
+                    deploy("nodeapp","node-app", "latest")
+                }
             }
         }
+        
+        
     }
 }
-
