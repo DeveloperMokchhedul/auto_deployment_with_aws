@@ -35,3 +35,40 @@ RUN npm install
 COPY . .
 EXPOSE 3000
 CMD ["node", "index.js"]
+
+
+## pipeline shell script
+
+pipeline {
+    agent any
+
+    stages {
+        stage('code') {
+            steps {
+                echo "git cloning"
+                git url: 'https://github.com/DeveloperMokchhedul/auto_deployment_with_aws.git', branch: 'main'
+                echo "git cloning complete"
+            }
+        }
+
+        stage('build') {
+            steps {
+                echo "docker build"
+                sh "docker build -t node-app:latest ."
+                echo "docker build complete"
+            }
+        }
+
+        stage('deploy') {
+            steps {
+               echo "deploy start"
+                sh '''
+                docker rm -f node-app || true
+                docker run -d --name node-app -p 3000:3000 node-app:latest
+                '''
+                echo "deploy complete"
+            }
+        }
+    }
+}
+
