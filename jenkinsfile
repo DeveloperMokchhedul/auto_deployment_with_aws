@@ -15,6 +15,16 @@ pipeline {
 
 
 
+        stage('Git Cloning') {
+            steps {
+                script {
+                    gitclone('main', 'https://github.com/DeveloperMokchhedul/auto_deployment_with_aws.git')
+                }
+            }
+        }
+
+
+
 
 
 
