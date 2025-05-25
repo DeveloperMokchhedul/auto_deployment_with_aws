@@ -38,6 +38,15 @@ pipeline {
             }
         }
 
+        stage('Deploy') {
+            steps {
+                echo 'Deploying Docker container...'
+                sh 'docker stop nodeapp || true'
+                sh 'docker rm nodeapp || true'
+                sh 'docker run -d -p 3000:5000 --name nodeapp mokchhedul/nodeapp:latest'
+            }
+        }
+
 
 
 
