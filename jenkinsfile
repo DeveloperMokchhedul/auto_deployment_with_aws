@@ -30,13 +30,17 @@ pipeline {
                 sh 'docker build -t nodeapp:latest .'
             }
         }
-        stage('Push to Docker Hub') {
+          stage('Push to Docker Hub') {
             steps {
-                script {
-                    push_github('nodeapp', 'latest')
+                echo 'Pushing the image to Docker Hub'
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+                    sh 'docker login -u $dockerHubUser -p $dockerHubPassword'
+                    sh 'docker tag nodeapp:latest mokchhedul/nodeapp:latest'
+                    sh 'docker push $dockerHubUser/nodeapp:latest'
                 }
             }
         }
+
 
         stage('Deploy') {
             steps {
