@@ -24,6 +24,24 @@ pipeline {
         }
 
 
+        stage('Build Docker Image') {
+            steps {
+                echo 'Building Docker image'
+                sh 'docker build -t nodeapp:latest .'
+            }
+        }
+        stage('Push to Docker Hub') {
+            steps {
+                script {
+                    push('mokchhedul', 'nodeapp', 'latest')
+                }
+            }
+        }
+
+
+
+
+
 
 
 
