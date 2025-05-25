@@ -1,0 +1,46 @@
+@Library("shared") _
+pipeline {
+    agent any
+
+    stages {
+        stage('Show Introduction') {
+            steps {
+                script {
+                    hello()
+                }
+            }
+        }
+
+        stage('Git Cloning') {
+            steps {
+                script {
+                    gitclone('main', 'https://github.com/DeveloperMokchhedul/auto_deployment_with_aws.git')
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                echo 'Building Docker image'
+                sh 'docker build -t nodeapp:latest .'
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            steps {
+                script {
+                    push('mokchhedul', 'nodeapp', 'latest')
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying Docker container...'
+                sh 'docker stop nodeapp || true'
+                sh 'docker rm nodeapp || true'
+                sh 'docker run -d -p 3000:5000 --name nodeapp mokchhedul/nodeapp:latest'
+            }
+        }
+    }
+}
